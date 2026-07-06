@@ -1,0 +1,62 @@
+@startuml
+' Cấu hình sơ đồ tổng quan rút gọn, tối ưu khoảng cách
+skinparam linetype ortho
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName "Arial"
+skinparam TitleFontSize 18
+skinparam BackgroundColor #ffffff
+
+' Định nghĩa bảng màu ĐỘ TƯƠNG PHẢN CAO cho các tầng lớn
+skinparam package {
+    BackgroundColor<<Presentation>> #fffde7
+    BorderColor<<Presentation>> #f57f17
+    
+    BackgroundColor<<Application>> #e8f5e9
+    BorderColor<<Application>> #2e7d32
+    
+    BackgroundColor<<DataStorage>> #e1f5fe
+    BorderColor<<DataStorage>> #0277bd
+    
+    BackgroundColor<<External>> #f3e5f5
+    BorderColor<<External>> #6a1b9a
+}
+
+title SƠ ĐỒ KIẾN TRÚC TỔNG QUÁT 
+
+' ==========================================
+' CÁC KHỐI CHỨC NĂNG LỚN
+' ==========================================
+
+package "TẦNG 1: PRESENTATION TIER\n(Giao diện Người dùng & Admin)" <<Presentation>> {
+    [Ứng dụng Giao diện Client\n(Web App / Dashboard)] as client_layer
+}
+
+package "TẦNG 2: APPLICATION TIER\n(Hệ thống Xử lý Logic & Điều phối)" <<Application>> {
+    [Cụm Máy chủ Xử lý Nghiệp vụ\n(API Gateway & Core Backend Services)] as backend_layer
+}
+
+package "TẦNG 3: DATA & STORAGE TIER\n(Hệ thống Lưu trữ Dữ liệu)" <<DataStorage>> {
+    [Kho lưu trữ Cơ sở dữ liệu\n(SQL DB & Cloud Storage)] as database_layer
+}
+
+package "TẦNG 4: EXTERNAL SERVICES\n(Dịch vụ Nền tảng Bên Thứ 3)" <<External>> {
+    [Hạ tầng API Ngoại vi\n(Bản đồ, Thanh toán, Email)] as external_layer
+}
+
+' ==========================================
+' ĐỊNH TUYẾN MŨI TÊN (CO NGẮN KHOẢNG CÁCH)
+' ==========================================
+
+' Chuyển sang dùng mũi tên ngắn - và đẩy note sang bên phải để tầng 1 và 2 sát nhau
+client_layer <-[#263238]-> backend_layer
+note right of client_layer : Giao thức tương tác:\nHTTPS / WSS
+
+' Giao tiếp giữa Server và Các Kho dữ liệu
+backend_layer <-[#01579b]-> database_layer
+
+' Giao tiếp gọi API dịch vụ bên thứ ba 
+backend_layer <-[#4a148c]-> external_layer
+
+@endum
