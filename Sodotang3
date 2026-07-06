@@ -1,0 +1,70 @@
+@startuml
+' Cấu hình sơ đồ Tầng 3 chuẩn hóa layout theo bản gốc, tối ưu in ấn
+skinparam linetype ortho
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName "Arial"
+skinparam TitleFontSize 18
+skinparam BackgroundColor #ffffff
+
+' Định nghĩa bảng màu chuẩn: Xanh dương (Dữ liệu của tôi) & Cam (Dữ liệu bên thứ 3)
+skinparam package {
+    BackgroundColor<<MyData>> #e3f2fd
+    BorderColor<<MyData>> #1565c0
+    
+    BackgroundColor<<ThirdPartyData>> #fff3e0
+    BorderColor<<ThirdPartyData>> #e65100
+}
+
+title SƠ ĐỒ CHI TIẾT TẦNG 3 (DATA TIER)
+
+package "TẦNG 3: DATA TIER (DATABASE STORAGE)" <<Tier3>> {
+
+    ' Phân hệ 1: Dữ liệu của tôi (Màu xanh dương - Xếp dọc theo bản gốc)
+    package "Dữ liệu của tôi " <<MyData>> {
+        database "Relational Database\n(MySQL / PostgreSQL)" as db_rdbms
+        database "NoSQL Document DB\n(MongoDB)" as db_nosql
+        database "Search Index DB\n(Elasticsearch)" as db_search
+    }
+
+    ' Phân hệ 2: Dữ liệu bên thứ 3 (Màu cam - Đặt song song bên cạnh)
+    package "Dữ liệu bên thứ 3 " <<ThirdPartyData>> {
+        database "In-Memory Database\n(Redis Cache)" as db_redis
+    }
+}
+
+' ==========================================
+' ĐIỀU PHỐI ĐƯỜNG NỐI LAYOUT CHUẨN BẢN GỐC
+' ==========================================
+db_rdbms -[hidden]down-> db_nosql
+db_nosql -[hidden]down-> db_search
+db_nosql -[hidden]right-> db_redis
+
+' Đường đứt nét thể hiện tương tác giữa Redis và các DB chính (Đồng bộ / Cache)
+db_redis <.[#e65100].> db_rdbms : "Đồng bộ / Cache"
+db_redis <.[#e65100].> db_nosql : "Đồng bộ / Cache"
+
+' ==========================================
+' ĐẶC TÍNH KỸ THUẬT (ĐẶT PHÍA DƯỚI CÓ ĐUÔI CHỈ THẲNG LÊN)
+' ==========================================
+
+note bottom of db_rdbms
+**Đặc tính kỹ thuật (Relational DB):**
+• Lưu trữ dữ liệu có cấu trúc (ACID).
+• Quản lý: Tài khoản, Đơn hàng, Thanh toán.
+end note
+
+note bottom of db_nosql
+**Đặc tính kỹ thuật (NoSQL DB):**
+• Lưu trữ dữ liệu dạng tài liệu (JSON).
+• Quản lý: Chi tiết tin đăng, Lịch sử chat.
+end note
+
+note bottom of db_redis
+**Đặc tính kỹ thuật (Redis Cache):**
+• Tốc độ siêu cao (Lưu trên RAM).
+• Tăng tốc truy vấn sản phẩm, lưu Session.
+end note
+
+@endum
