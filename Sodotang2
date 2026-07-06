@@ -1,0 +1,70 @@
+@startuml
+' Cấu hình sơ đồ Tầng 2 tối ưu hóa kích thước khổ giấy in
+skinparam linetype ortho
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName "Arial"
+skinparam TitleFontSize 18
+skinparam BackgroundColor #ffffff
+
+' Bảng màu tương phản cao cho Tầng 2
+skinparam package {
+    BackgroundColor<<InternalT2>> #e8f5e9
+    BorderColor<<InternalT2>> #2e7d32
+    
+    BackgroundColor<<PartnerT2>> #fce4ec
+    BorderColor<<PartnerT2>> #c2185b
+}
+
+title SƠ ĐỒ CHI TIẾT TẦNG 2 
+
+' ==========================================
+' TẦNG 2 - PHÂN HỆ SERVER NỘI BỘ 
+' ==========================================
+package "Hệ thống Server của Tôi (Nội bộ)" <<InternalT2>> {
+    
+    [API Gateway / Load Balancer\n---\n**Đặc tính Bộ điều phối (Gateway):**\n• Tiếp nhận yêu cầu từ Tầng 1, kiểm tra tải.\n• Định tuyến chính xác request xuống từng Service lõi.] as app_gateway
+    
+    package "Core Backend Server (Node.js/Python)\n---\n**Đặc tính Core Backend (Nội bộ):**\n• Xử lý toàn bộ logic nghiệp vụ (Xác thực, Tin đăng, Mặc cả, Chat).\n• Đóng vai trò đầu não, trực tiếp đưa ra quyết định lưu trữ dữ liệu." as core_services {
+        [Auth Service] as srv_auth
+        [Product Service] as srv_product
+        [Order & Payment] as srv_order
+        [Search Service] as srv_search
+        [Chat Logic Engine] as srv_chat
+        [Notification Service] as srv_notify
+    }
+}
+
+' ==========================================
+' TẦNG 2 - PHÂN HỆ SERVER ĐỐI TÁC 
+' ==========================================
+package "Server của Các Nhà Cung Cấp Dịch Vụ " <<PartnerT2>> {
+    
+    package "Hệ thống Server Đối tác\n---\n**Đặc tính Cụm Máy chủ Đối tác (Trung gian):**\n• Đảm nhận các tác vụ nặng (Đồng bộ real-time, CDN, Mã hóa OTP/Banking).\n• Chuẩn bị dữ liệu thô để sẵn sàng kết nối xuống hạ tầng API ở tầng dưới." as partner_services {
+        [CDN Caching Server Cluster] as srv_p_cdn
+        [Firebase App Server Platform] as srv_p_firebase
+        [Google Maps Application Server] as srv_p_maps
+        [Payment Gateway Processing Server] as srv_p_pay
+        [Mail Transfer Server (MTA)] as srv_p_mail
+    }
+}
+
+' ==========================================
+' ĐỊNH TUYẾN MŨI TÊN ĐIỀU PHỐI NỘI BỘ (1 CHIỀU)
+' ==========================================
+app_gateway -[#1b5e20]-> srv_auth
+app_gateway -[#1b5e20]-> srv_product
+app_gateway -[#1b5e20]-> srv_order
+app_gateway -[#1b5e20]-> srv_search
+app_gateway -[#1b5e20]-> srv_chat
+app_gateway -[#1b5e20]-> srv_notify
+
+srv_product -[#880e4f]-> srv_p_cdn
+srv_search -[#880e4f]-> srv_p_maps
+srv_chat -[#880e4f]-> srv_p_firebase
+srv_order -[#880e4f]-> srv_p_pay
+srv_order -[#880e4f]-> srv_p_mail
+srv_notify -[#880e4f]-> srv_p_mail
+
+@endum
