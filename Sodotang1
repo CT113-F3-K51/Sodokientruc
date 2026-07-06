@@ -1,0 +1,44 @@
+@startuml
+' Cấu hình sơ đồ Tầng 1 tối giản, ghi chú nằm phía dưới
+skinparam linetype ortho
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName "Arial"
+skinparam TitleFontSize 18
+skinparam BackgroundColor #ffffff
+
+' Bảng màu tương phản cao cho Tầng 1
+skinparam package {
+    BackgroundColor<<Tier1>> #fffde7
+    BorderColor<<Tier1>> #f57f17
+}
+
+title SƠ ĐỒ CHI TIẾT TẦNG 1 
+
+' ==========================================
+' TẦNG 1: PRESENTATION TIER (CHỈ LẤY PHẦN TỬ GỐC)
+' ==========================================
+package "TẦNG 1: PRESENTATION TIER (CLIENT) [VÀNG]" <<Tier1>> {
+    
+    [Web App cho Máy tính & Điện thoại\n---\n• Công nghệ: React / Vue.js\n• Vai trò: Giao diện dành cho Sinh viên] as client_web
+    
+    [Admin Dashboard Web\n---\n• Công nghệ: React / Tailwind CSS\n• Vai trò: Giao diện dành cho Quản trị viên] as client_admin
+
+}
+
+' Di chuyển các đặc tính kỹ thuật nằm ở PHÍA DƯỚI cấu phần gốc
+note bottom of client_web
+  **Đặc tính kỹ thuật:**
+  * Giao tiếp qua HTTPS (Yêu cầu thông thường)
+  * Giao tiếp qua WSS (Luồng Chat Real-time)
+  * Tối ưu hiển thị Responsive (Mobile/PC)
+end note
+
+note bottom of client_admin
+  **Đặc tính kỹ thuật:**
+  * Giao tiếp qua HTTPS bảo mật
+  * Quản lý tập trung trên màn hình Desktop
+end note
+
+@endum
