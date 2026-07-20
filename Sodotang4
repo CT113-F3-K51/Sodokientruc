@@ -1,0 +1,59 @@
+@startuml
+skinparam linetype ortho
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName "Arial"
+skinparam TitleFontSize 18
+skinparam BackgroundColor #ffffff
+
+skinparam package {
+    BackgroundColor<<ExternalT4>> #f3e5f5
+    BorderColor<<ExternalT4>> #7b1fa2
+}
+
+skinparam component {
+    BackgroundColor #ffffff
+    BorderColor #757575
+}
+
+skinparam note {
+    BackgroundColor #fff9c4
+    BorderColor #fbc02d
+}
+
+title SƠ ĐỒ CHI TIẾT TẦNG 4
+
+package "TẦNG 4: TĂNG DỊCH VỤ BÊN THỨ 3" <<ExternalT4>> {
+    
+    component "Google Maps API" as api_maps
+    note bottom of api_maps
+        **Đặc tính kỹ thuật:**
+        --
+        * Dịch vụ bản đồ bên thứ 3
+        * Tích hợp định vị, tìm đường
+        * Định dạng dữ liệu: JSON/REST API
+    end note
+
+    component "VNPay / MoMo API Gateway" as api_payment
+    note bottom of api_payment
+        **Đặc tính kỹ thuật:**
+        --
+        * Cổng thanh toán trực tuyến
+        * Mã hóa bảo mật IPN / Checksum
+        * Giao thức: HTTPS POST/REDIRECT
+    end note
+
+    component "SMTP Gmail Server" as api_smtp
+    note bottom of api_smtp
+        **Đặc tính kỹ thuật:**
+        --
+        * Hệ thống chuyển tiếp thư điện tử
+        * Giao thức: SMTP / TLS
+        * Cổng kết nối: 587 / 465
+    end note
+    
+    api_maps -right[hidden]-> api_payment
+    api_payment -right[hidden]-> api_smtp
+}
+@enduml
